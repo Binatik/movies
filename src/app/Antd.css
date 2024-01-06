@@ -1,0 +1,13 @@
+.movie__card.ant-card .ant-card-body::before {
+  content: none;
+}
+
+.movie__card.ant-card .ant-card-body {
+  padding: 2.5px 10px;
+}
+
+@media (min-width: 576px) {
+  .movie__card.ant-card .ant-card-body {
+    padding: 0;
+  }
+}

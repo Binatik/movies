@@ -1,0 +1,62 @@
+.movie__card {
+  margin-top: 8px;
+}
+
+.movie__photo {
+  height: 120px; 
+  position: absolute;
+}
+
+.movie__content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 0;
+}
+
+.movie__top {
+  padding-left: 90px;
+}
+
+.movie__block {
+  display: flex;
+}
+
+.movie__tegs {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.movie__info {
+  padding-top: 20px;
+  flex: 1;
+}
+
+.movie__rate {
+  padding-top: 15px;
+  padding-bottom: 15px;
+  align-self: flex-end;
+}
+
+@media (min-width: 576px) {
+  .movie__card {
+    margin-top: 34px;
+  }
+
+  .movie__photo {
+    height: auto;
+    position: relative;
+  }
+  
+  .movie__content {
+    padding: 12px 9px 4px 20px;
+  }
+  
+  .movie__top {
+    padding-left: 0;
+    padding-top: 0;
+  }
+}
