@@ -1,9 +1,9 @@
 import { CardProps } from 'antd/lib/card';
 import { CardType } from 'antd/lib/card/Card';
 
-export type ICustumType = 'primary'
+export type ICustumCardType = 'primary'
 
-export type ICard = {
+export type ICardProps = {
   children: React.ReactNode
-  type?: CardType | ICustumType
+  type?: CardType | ICustumCardType
 } & Omit<CardProps, 'type'>

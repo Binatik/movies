@@ -44,6 +44,7 @@
 @media (min-width: 576px) {
   .movie__card {
     margin-top: 34px;
+    flex: 1 1 460px;
   }
 
   .movie__photo {

@@ -2,8 +2,9 @@ import { ThemeConfig } from "antd";
 
 export const theme: ThemeConfig = {
   token: {
-    colorPrimaryHover: '#000',
-    borderRadius: 3,
+    // colorPrimaryHover: '#fff',
+    // colorPrimary: '#fff',
+    borderRadius: 4,
   },
 
   components: {
@@ -15,6 +16,9 @@ export const theme: ThemeConfig = {
     },
     Progress: {
       defaultColor: '#eedc40'
+    },
+    Pagination: {
+      itemActiveBg: '#1890ff',
     }
   },
 }

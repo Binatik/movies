@@ -1,11 +1,17 @@
-import { Input } from 'antd';
+import { Flex, Input } from 'antd';
 import { Card } from '../Card';
 
 function Search() {
   return (
     <>
       <Input size="large" placeholder="Type to search..." />
-      <Card />
+      <Flex gap="middle" justify='center' wrap='wrap'>
+        <Card />
+        <Card />
+        <Card />
+        <Card />
+        <Card />
+      </Flex>
     </>
   )
 }
