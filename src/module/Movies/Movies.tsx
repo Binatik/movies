@@ -2,7 +2,7 @@ import { Flex, Input, Tabs } from 'antd';
 import { Pagination } from '../../ui';
 import { useEffect, useMemo, useState } from 'react';
 import { Card } from './Card';
-import { MoviesService } from '../../service/api/moviesService';
+import { MoviesService } from '../../service/api/MoviesService';
 
 type UnwrapPromise<T> = T extends Promise<infer K> ? K : T
 
