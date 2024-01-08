@@ -2,13 +2,14 @@ import mov from './mov.png'
 import { Card as CardUi } from '../../../ui'
 import { Progress, Rate, Tag, Typography } from 'antd';
 const { Title, Text } = Typography;
-import './Card.css'
 import { useEffect, useRef } from 'react';
+import { ICardMovieProps } from './Card.types';
+
+import './Card.css'
 
 
-function Card() {
-  const rating = 6.6;
-  const ratingToPercentage = (rating: number) => Math.round((rating / 6.7) * 100);
+function Card({ movie }: ICardMovieProps) {
+  const ratingToPercentage = (average: number) => Math.round((average / 10) * 100);
   const progressRef = useRef<HTMLDivElement>(null)
 
 
@@ -21,14 +22,14 @@ function Card() {
       }
 
       //Получае span в ProgressBar и меняем в dom узле строку с % на строку с rating
-      current.children[0].children[1].textContent = rating.toString()
+      current.children[0].children[1].textContent = movie.vote_average.toFixed(1).toString()
     }
     catch (error) {
       if (error instanceof Error) {
         console.log(error.message)
       }
     }
-  }, [])
+  }, [movie.vote_average])
 
   return (
     <CardUi className='movie__card' hoverable type='primary'>
@@ -36,8 +37,8 @@ function Card() {
       <div className='movie__content'>
         <div className='movie__top'>
           <div className='movie__block'>
-            <Title style={{ margin: 0 }} level={3}>The way back</Title>
-            <Progress style={{ marginLeft: 'auto' }} ref={progressRef} type="circle" percent={ratingToPercentage(rating)} size={45} />
+            <Title style={{ margin: 0 }} level={3}>{movie.title}</Title>
+            <Progress style={{ marginLeft: 'auto' }} ref={progressRef} type="circle" percent={ratingToPercentage(movie.vote_average)} size={45} />
           </div>
           <Text className='movie__date' type="secondary">March 5, 2020</Text>
           <div className='movie__tegs'>
