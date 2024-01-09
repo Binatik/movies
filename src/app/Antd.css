@@ -6,6 +6,11 @@
   padding: 2.5px 10px;
 }
 
+/* Отключение странного меню в пагинации */
+.ant-pagination .ant-pagination-options {
+  display: none;
+}
+
 @media (min-width: 576px) {
   .movie__card.ant-card .ant-card-body {
     padding: 0;

@@ -3,36 +3,70 @@ import { Pagination } from '../../ui';
 import { useEffect, useMemo, useState } from 'react';
 import { Card } from './Card';
 import { MoviesService } from '../../service/api/MoviesService';
+import Cookies from "js-cookie";
 
 type UnwrapPromise<T> = T extends Promise<infer K> ? K : T
 
+const cachePages = new Map<number, number>()
 const api = new MoviesService()
 const counterCurrentPage = 5; //Кол - во элементов на одну стр.
+
+api.getCreateGuestSession({
+  "Authorization": api.getKey(),
+  "accept": 'application/json'
+}).then((data) => {
+  Cookies.set('guest_session_id', data.guest_session_id)
+})
 
 
 function Movies() {
   const [currentPage, setCurrentPage] = useState(0)
-  const [movies, setMovies] = useState<UnwrapPromise<ReturnType<typeof api.getPopularMovie>>['results']>([])
+  const [popularMovies, setPopularMovies] = useState<UnwrapPromise<ReturnType<typeof api.getPopularMovie>>['results']>([])
+
+  console.log(popularMovies)
 
   useEffect(() => {
     async function getData() {
       const data = await api.getPopularMovie('ru-US', 1, {
-        "Authorization": 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIxZDEwYTMzMTg4ZWZkOTU3YWMzMzlhNTljNzY2MmJiOCIsInN1YiI6IjY1OWJmNWY1Y2E0ZjY3MDFhNDNkN2YwNSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.J-1PvFXJi6TEswEbh8Ra-NiwID1KZxyLNKXPMQZACEY',
+        "Authorization": api.getKey(),
         "accept": 'application/json'
       })
-      console.log(data)
-      setMovies(data.results)
+
+      setPopularMovies(data.results)
       setCurrentPage(1)
     }
     getData()
   }, [])
 
-  const currentPageMovies = useMemo(() => {
+  const currentPagePopularMovies = useMemo(() => {
     const lastIndex = currentPage * counterCurrentPage; // 3 === 3 * 5 = 15
     const firstIndex = lastIndex - counterCurrentPage; // 3 === 15 - 5 = 10
 
-    return movies.slice(firstIndex, lastIndex) // 3 === от 10 до 15 = 5 элементов
-  }, [currentPage, movies])
+    return popularMovies.slice(firstIndex, lastIndex) // 3 === от 10 до 15 = 5 элементов
+  }, [currentPage, popularMovies])
+
+  async function followPagination(event: number) {
+    setCurrentPage(event)
+
+    if (event % 4 !== 0) {
+      return
+    }
+
+    const getPageServer = Math.floor(event / counterCurrentPage) + 1
+
+    if (!cachePages.has(getPageServer)) {
+      const data = await api.getPopularMovie('ru-US', getPageServer, {
+        "Authorization": api.getKey(),
+        "accept": 'application/json'
+      })
+
+      cachePages.set(getPageServer, getPageServer)
+
+      setPopularMovies((prev) => {
+        return [...prev, ...data.results]
+      })
+    }
+  }
 
   return (
     //Warning: [antd: Tabs] `Tabs.TabPane` is deprecated.
@@ -40,12 +74,12 @@ function Movies() {
       <Tabs.TabPane tab="Search" key="item-1">
         <Input size="large" placeholder="Type to search..." />
         <Flex gap="middle" justify='center' wrap='wrap'>
-          {currentPageMovies.map((movie) => <Card key={movie.id} movie={movie} />)}
+          {currentPagePopularMovies.map((movie) => <Card key={movie.id} movie={movie} />)}
         </Flex>
         <br />
         <br />
         <Flex gap="middle" justify='center'>
-          <Pagination onChange={(event) => setCurrentPage(event)} type='primary' defaultPageSize={counterCurrentPage} className='movie__pagination' total={20} />
+          <Pagination onChange={followPagination} type='primary' defaultPageSize={counterCurrentPage} className='movie__pagination' total={popularMovies.length} />
         </Flex>
         <br />
         <br />

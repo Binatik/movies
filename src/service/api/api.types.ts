@@ -1,9 +1,4 @@
-export interface Dates { 
-  maximum: string;
-  minimum: string;
-}
-
-export interface Results { 
+export interface IMovie { 
   adult: boolean;
   backdrop_path: string;
   genre_ids?: number[] | null;
@@ -20,10 +15,20 @@ export interface Results {
   vote_count: number;
 }
 
-export interface RootObject { 
-  dates: Dates;
+export interface RootMovie { 
+  dates: {
+    maximum: string;
+    minimum: string;
+  }
   page: number;
-  results: Results[];
+  results: IMovie[];
   total_pages: number;
   total_results: number;
+}
+
+
+export interface IGustSession { 
+  success: boolean;
+  guest_session_id: string;
+  expires_at: string;
 }

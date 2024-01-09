@@ -46,7 +46,7 @@ function Card({ movie }: ICardMovieProps) {
             <Tag color="default">Drama</Tag>
           </div>
         </div>
-        <Text className='movie__info'>A former basketball all-star, who has lost his wife and family foundation in a struggle with addiction attempts to regain his soul  and salvation by becoming the coach of a disparate ethnically mixed high ...</Text>
+        <Text className='movie__info'>{movie.overview}</Text>
         <Rate className='movie__rate' allowHalf count={10} defaultValue={2.5} />
       </div>
     </CardUi>
