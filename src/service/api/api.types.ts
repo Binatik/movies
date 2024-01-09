@@ -1,3 +1,6 @@
+export type IHttpMethod = "GET" | "POST" | "PUT" | "DELETE"
+
+
 export interface IMovie { 
   adult: boolean;
   backdrop_path: string;

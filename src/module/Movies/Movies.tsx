@@ -11,32 +11,20 @@ const cachePages = new Map<number, number>()
 const api = new MoviesService()
 const counterCurrentPage = 5; //Кол - во элементов на одну стр.
 
-api.getCreateGuestSession({
+const headers = {
   "Authorization": api.getKey(),
   "accept": 'application/json'
-}).then((data) => {
+}
+
+api.getCreateGuestSession(headers).then((data) => {
   Cookies.set('guest_session_id', data.guest_session_id)
 })
-
 
 function Movies() {
   const [currentPage, setCurrentPage] = useState(0)
   const [popularMovies, setPopularMovies] = useState<UnwrapPromise<ReturnType<typeof api.getPopularMovie>>['results']>([])
 
   console.log(popularMovies)
-
-  useEffect(() => {
-    async function getData() {
-      const data = await api.getPopularMovie('ru-US', 1, {
-        "Authorization": api.getKey(),
-        "accept": 'application/json'
-      })
-
-      setPopularMovies(data.results)
-      setCurrentPage(1)
-    }
-    getData()
-  }, [])
 
   const currentPagePopularMovies = useMemo(() => {
     const lastIndex = currentPage * counterCurrentPage; // 3 === 3 * 5 = 15
@@ -45,6 +33,16 @@ function Movies() {
     return popularMovies.slice(firstIndex, lastIndex) // 3 === от 10 до 15 = 5 элементов
   }, [currentPage, popularMovies])
 
+  useEffect(() => {
+    async function getData() {
+      const data = await api.getPopularMovie('ru-US', 1, headers)
+
+      setPopularMovies(data.results)
+      setCurrentPage(1)
+    }
+    getData()
+  }, [])
+
   async function followPagination(event: number) {
     setCurrentPage(event)
 
@@ -52,13 +50,12 @@ function Movies() {
       return
     }
 
-    const getPageServer = Math.floor(event / counterCurrentPage) + 1
+    const getPageServer = Math.floor(event / counterCurrentPage) + 2
+
+    console.log(getPageServer)
 
     if (!cachePages.has(getPageServer)) {
-      const data = await api.getPopularMovie('ru-US', getPageServer, {
-        "Authorization": api.getKey(),
-        "accept": 'application/json'
-      })
+      const data = await api.getPopularMovie('ru-US', getPageServer, headers)
 
       cachePages.set(getPageServer, getPageServer)
 
@@ -79,7 +76,7 @@ function Movies() {
         <br />
         <br />
         <Flex gap="middle" justify='center'>
-          <Pagination onChange={followPagination} type='primary' defaultPageSize={counterCurrentPage} className='movie__pagination' total={popularMovies.length} />
+          {popularMovies.length > 1 && <Pagination onChange={followPagination} type='primary' defaultPageSize={counterCurrentPage} className='movie__pagination' total={popularMovies.length} />}
         </Flex>
         <br />
         <br />

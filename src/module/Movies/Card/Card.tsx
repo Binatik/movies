@@ -6,12 +6,13 @@ import { useEffect, useRef } from 'react';
 import { ICardMovieProps } from './Card.types';
 
 import './Card.css'
+import { MoviesService } from '../../../service/api/MoviesService';
 
+const api = new MoviesService()
 
 function Card({ movie }: ICardMovieProps) {
   const ratingToPercentage = (average: number) => Math.round((average / 10) * 100);
   const progressRef = useRef<HTMLDivElement>(null)
-
 
   useEffect(() => {
     try {
@@ -31,6 +32,21 @@ function Card({ movie }: ICardMovieProps) {
     }
   }, [movie.vote_average])
 
+  function addRate(rate: number) {
+    const headers = {
+      "Authorization": api.getKey(),
+      "accept": 'application/json;charset=utf-8',
+    }
+
+    const body = {
+      value: rate
+    }
+
+    console.log(JSON.stringify(body))
+
+    api.postAddRating(movie.id, headers, JSON.stringify(body))
+  }
+
   return (
     <CardUi className='movie__card' hoverable type='primary'>
       <img className='movie__photo' src={mov} alt='movie' />
@@ -47,7 +63,7 @@ function Card({ movie }: ICardMovieProps) {
           </div>
         </div>
         <Text className='movie__info'>{movie.overview}</Text>
-        <Rate className='movie__rate' allowHalf count={10} defaultValue={2.5} />
+        <Rate onChange={addRate} className='movie__rate' allowHalf count={10} defaultValue={0} />
       </div>
     </CardUi>
   )
