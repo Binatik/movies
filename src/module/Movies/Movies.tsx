@@ -18,13 +18,13 @@ const headers = {
 }
 
 const isSession = Cookies.get('guest_session_id')
-
+console.log(isSession, 'session')
 if (!isSession) {
-  api.getCreateGuestSession(headers).then((data) => {
-    Cookies.set('guest_session_id', data.guest_session_id, { expires: 90 })
+  await api.getCreateGuestSession(headers).then((data) => {
+    Cookies.set('guest_session_id', data.guest_session_id, { expires: 1 })
   })
+  console.log(isSession, 'session', 'после запроса если ссесии нет')
 }
-
 function Movies() {
   const [currentPage, setCurrentPage] = useState(0)
   const [popularMovies, setPopularMovies] = useState<UnwrapPromise<ReturnType<typeof api.getPopularMovie>>['results']>([])
@@ -39,7 +39,8 @@ function Movies() {
   useEffect(() => {
     async function getData() {
       const data = await api.getPopularMovie('ru-US', 1, headers)
-
+      // const data = await api.getSearchMovies('по', true, 'ru-US', 1, headers)
+      console.log(data)
       setPopularMovies(data.results)
       setCurrentPage(1)
     }

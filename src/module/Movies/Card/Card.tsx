@@ -34,12 +34,11 @@ function Card({ movie }: ICardMovieProps) {
 
   function addRate(rate: number) {
     const headers = {
-      "Authorization": api.getToken,
       "accept": 'application/json',
       "Content-Type": 'application/json;charset=utf-8'
     }
 
-    api.postAddRating(movie.id, headers, JSON.stringify({ value: rate }))
+    api.postAddRating(movie.id, JSON.stringify({ value: rate }), headers)
   }
 
   return (

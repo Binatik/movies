@@ -85,7 +85,7 @@ class MoviesService {
     return this.getResponse<Promise<unknown>>(`/guest_session/${Cookies.get('guest_session_id')}/rated/movies?api_key=${this.getKey}&language=${language}&page=${page.toString()}&sort_by=${sort}`, fetchOptions)
   }
 
-  async postAddRating(movieId: number, headers: HeadersInit, body: BodyInit) {
+  async postAddRating(movieId: number, body: BodyInit, headers?: HeadersInit) {
     const method: IHttpMethod = 'POST'
     const fetchOptions = {
       method: method,
@@ -93,7 +93,16 @@ class MoviesService {
       body: body
     };
 
-    return this.getResponse<Promise<unknown>>(`/movie/${movieId.toString()}/rating?guest_session_id=${Cookies.get('guest_session_id')}`, fetchOptions)
+    return this.getResponse<Promise<unknown>>(`/movie/${movieId.toString()}/rating?guest_session_id=${Cookies.get('guest_session_id')}&api_key=${this.getKey}`, fetchOptions)
+  }
+
+  async getSearchMovies(query:string, include_adult: boolean, language: 'ru-US' | 'en-US', page: number, headers?: HeadersInit) {
+    const method: IHttpMethod = 'GET';
+    const fetchOptions = {
+      method: method,
+      headers
+    };
+    return this.getResponse<Promise<RootMovie>>(`/search/movie?query=${query}&include_adult=${include_adult}&language=${language}&page=${page.toString()}`, fetchOptions)
   }
 }
 
