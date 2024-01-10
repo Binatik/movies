@@ -4,9 +4,9 @@ import { Progress, Rate, Tag, Typography } from 'antd';
 const { Title, Text } = Typography;
 import { useEffect, useRef } from 'react';
 import { ICardMovieProps } from './Card.types';
-
-import './Card.css'
 import { MoviesService } from '../../../service/api/MoviesService';
+import './Card.css'
+
 
 const api = new MoviesService()
 
@@ -34,17 +34,12 @@ function Card({ movie }: ICardMovieProps) {
 
   function addRate(rate: number) {
     const headers = {
-      "Authorization": api.getKey(),
-      "accept": 'application/json;charset=utf-8',
+      "Authorization": api.getToken,
+      "accept": 'application/json',
+      "Content-Type": 'application/json;charset=utf-8'
     }
 
-    const body = {
-      value: rate
-    }
-
-    console.log(JSON.stringify(body))
-
-    api.postAddRating(movie.id, headers, JSON.stringify(body))
+    api.postAddRating(movie.id, headers, JSON.stringify({ value: rate }))
   }
 
   return (

@@ -5,22 +5,52 @@ import Cookies from "js-cookie";
 class MoviesService {
   //this api env in declare
   key: string
+  token: string
   api: 'https://api.themoviedb.org/3'
 
   constructor() {
-    this.key = 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIxZDEwYTMzMTg4ZWZkOTU3YWMzMzlhNTljNzY2MmJiOCIsInN1YiI6IjY1OWJmNWY1Y2E0ZjY3MDFhNDNkN2YwNSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.J-1PvFXJi6TEswEbh8Ra-NiwID1KZxyLNKXPMQZACEY'
+    this.token = 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIxZDEwYTMzMTg4ZWZkOTU3YWMzMzlhNTljNzY2MmJiOCIsInN1YiI6IjY1OWJmNWY1Y2E0ZjY3MDFhNDNkN2YwNSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.J-1PvFXJi6TEswEbh8Ra-NiwID1KZxyLNKXPMQZACEY'
+    this.key = '1d10a33188efd957ac339a59c7662bb8'
     this.api = `https://api.themoviedb.org/3`
   }
 
-  getKey() {
-    return this.key
+  get getKey() {
+    return this.key;
+  }
+
+  get getToken() {
+    return this.token;
   }
 
   async getResponse<T>(url: string, fetchOptions: RequestInit): Promise<T> {
-    const request = `${this.api + url}`;
-    const res: Response = await fetch(request, fetchOptions);
-    console.log(res)
-    return await res.json()
+    try {
+      const request = `${this.api + url}`;
+      const res: Response = await fetch(request, fetchOptions);
+      try {
+        if (!res.ok) {
+          console.log(res)
+          throw new Error('not status ok')
+        }
+
+        return res.json()
+      }
+
+      catch (error) {
+        if (error instanceof Error) {
+          console.log(error.message)
+        }
+
+        throw error
+      }
+    }
+    catch (error) {
+      if (error instanceof Error) {
+        console.log('Disconnect internet and vpn')
+        console.log(error.message)
+      }
+
+      throw error
+    }
   }
 
   async getCreateGuestSession(headers: HeadersInit) {
@@ -40,8 +70,8 @@ class MoviesService {
       method: method,
       headers
     };
-    console.log(`/movie/now_playing?language=${language}&page=${page.toString()}`)
-    return this.getResponse<Promise<RootMovie>>(`/movie/now_playing?language=${language}&page=${page.toString()}`, fetchOptions)
+    console.log(`/movie/popular?language=${language}&page=${page.toString()}`)
+    return this.getResponse<Promise<RootMovie>>(`/movie/popular?language=${language}&page=${page.toString()}`, fetchOptions)
   }
 
   async getRatedMovies(language: 'ru-US' | 'en-US', page: number, sort: 'created_at.asc' | 'created_at.desc', headers?: HeadersInit) {
@@ -51,8 +81,8 @@ class MoviesService {
       method: method,
       headers
     };
-
-    return this.getResponse<Promise<unknown>>(`/guest_session/${Cookies.get('guest_session_id')}/rated/movies?language=${language}&page=${page.toString()}&sort_by=${sort}`, fetchOptions)
+    // `${this._apiBase}/guest_session/${sessionId}/rated/movies?api_key=${this._apiKey}&language=en-US&page=${pageNum}&sort_by=created_at.asc`
+    return this.getResponse<Promise<unknown>>(`/guest_session/${Cookies.get('guest_session_id')}/rated/movies?api_key=${this.getKey}&language=${language}&page=${page.toString()}&sort_by=${sort}`, fetchOptions)
   }
 
   async postAddRating(movieId: number, headers: HeadersInit, body: BodyInit) {
@@ -63,7 +93,7 @@ class MoviesService {
       body: body
     };
 
-    return this.getResponse<Promise<unknown>>(`movie/${movieId.toString()}rating?guest_session_id=${Cookies.get('guest_session_id')}`, fetchOptions)
+    return this.getResponse<Promise<unknown>>(`/movie/${movieId.toString()}/rating?guest_session_id=${Cookies.get('guest_session_id')}`, fetchOptions)
   }
 }
 

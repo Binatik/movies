@@ -10,21 +10,24 @@ type UnwrapPromise<T> = T extends Promise<infer K> ? K : T
 const cachePages = new Map<number, number>()
 const api = new MoviesService()
 const counterCurrentPage = 5; //Кол - во элементов на одну стр.
+let pageServer = 1;
 
 const headers = {
-  "Authorization": api.getKey(),
+  "Authorization": api.getToken,
   "accept": 'application/json'
 }
 
-api.getCreateGuestSession(headers).then((data) => {
-  Cookies.set('guest_session_id', data.guest_session_id)
-})
+const isSession = Cookies.get('guest_session_id')
+
+if (!isSession) {
+  api.getCreateGuestSession(headers).then((data) => {
+    Cookies.set('guest_session_id', data.guest_session_id, { expires: 90 })
+  })
+}
 
 function Movies() {
   const [currentPage, setCurrentPage] = useState(0)
   const [popularMovies, setPopularMovies] = useState<UnwrapPromise<ReturnType<typeof api.getPopularMovie>>['results']>([])
-
-  console.log(popularMovies)
 
   const currentPagePopularMovies = useMemo(() => {
     const lastIndex = currentPage * counterCurrentPage; // 3 === 3 * 5 = 15
@@ -43,21 +46,27 @@ function Movies() {
     getData()
   }, [])
 
+  useEffect(() => {
+    async function getData() {
+      const data = await api.getRatedMovies('ru-US', 1, 'created_at.asc')
+      console.log(data)
+    }
+    getData()
+  }, [])
+
   async function followPagination(event: number) {
     setCurrentPage(event)
-
+    console.log(event)
     if (event % 4 !== 0) {
       return
     }
 
-    const getPageServer = Math.floor(event / counterCurrentPage) + 2
 
-    console.log(getPageServer)
+    if (!cachePages.has(pageServer)) {
+      const data = await api.getPopularMovie('ru-US', pageServer, headers)
 
-    if (!cachePages.has(getPageServer)) {
-      const data = await api.getPopularMovie('ru-US', getPageServer, headers)
-
-      cachePages.set(getPageServer, getPageServer)
+      cachePages.set(pageServer, pageServer)
+      pageServer += 1
 
       setPopularMovies((prev) => {
         return [...prev, ...data.results]
