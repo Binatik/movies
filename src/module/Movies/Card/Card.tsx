@@ -4,7 +4,7 @@ import { Progress, Rate, Tag, Typography } from 'antd';
 const { Title, Text } = Typography;
 import { useEffect, useRef } from 'react';
 import { ICardMovieProps } from './Card.types';
-import { MoviesService } from '../../../service/api/MoviesService';
+import { MoviesService } from '../../../api/MoviesService';
 import './Card.css'
 
 

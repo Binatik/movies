@@ -1,4 +1,5 @@
-import { IGustSession, IHttpMethod, RootMovie } from "./api.types";
+// import { ExceptionMethods } from "./ExceptionMethods";
+import { IFetchError, IGustSession, IHttpMethod, IServerError, RootMovie } from "./api.types";
 import Cookies from "js-cookie";
 
 
@@ -25,31 +26,22 @@ class MoviesService {
   async getResponse<T>(url: string, fetchOptions: RequestInit): Promise<T> {
     try {
       const request = `${this.api + url}`;
-      const res: Response = await fetch(request, fetchOptions);
-      try {
-        if (!res.ok) {
-          console.log(res)
-          throw new Error('not status ok')
-        }
-
-        return res.json()
+      const response: Response = await fetch(request, fetchOptions);
+      if (!response.ok) {
+        return Promise.reject({
+          message: 'ServerError',
+          status: true,
+          payload: response.status
+        })
       }
-
-      catch (error) {
-        if (error instanceof Error) {
-          console.log(error.message)
-        }
-
-        throw error
-      }
+      return response.json()
     }
     catch (error) {
-      if (error instanceof Error) {
-        console.log('Disconnect internet and vpn')
-        console.log(error.message)
-      }
-
-      throw error
+      return Promise.reject({
+        message: 'FetchError' ,
+        status: true,
+        payload: 'Network problems'
+      })
     }
   }
 
@@ -81,7 +73,6 @@ class MoviesService {
       method: method,
       headers
     };
-    // `${this._apiBase}/guest_session/${sessionId}/rated/movies?api_key=${this._apiKey}&language=en-US&page=${pageNum}&sort_by=created_at.asc`
     return this.getResponse<Promise<unknown>>(`/guest_session/${Cookies.get('guest_session_id')}/rated/movies?api_key=${this.getKey}&language=${language}&page=${page.toString()}&sort_by=${sort}`, fetchOptions)
   }
 
@@ -96,13 +87,25 @@ class MoviesService {
     return this.getResponse<Promise<unknown>>(`/movie/${movieId.toString()}/rating?guest_session_id=${Cookies.get('guest_session_id')}&api_key=${this.getKey}`, fetchOptions)
   }
 
-  async getSearchMovies(query:string, include_adult: boolean, language: 'ru-US' | 'en-US', page: number, headers?: HeadersInit) {
+  async getSearchMovies(query: string, include_adult: boolean, language: 'ru-US' | 'en-US', page: number, headers?: HeadersInit) {
     const method: IHttpMethod = 'GET';
     const fetchOptions = {
       method: method,
       headers
     };
     return this.getResponse<Promise<RootMovie>>(`/search/movie?query=${query}&include_adult=${include_adult}&language=${language}&page=${page.toString()}`, fetchOptions)
+  }
+
+  isApiError(error: IFetchError) {
+    if (error.message) {
+      return ['FetchError'].includes(error.message)
+    }
+  }
+
+  isApiResponse(error: IServerError)  {
+    if (error.message) {
+      return ['ServerError'].includes(error.message)
+    }
   }
 }
 

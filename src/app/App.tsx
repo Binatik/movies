@@ -1,9 +1,12 @@
 import { theme } from '../theme';
 import { ConfigProvider } from 'antd';
 import { Movies } from '../module';
+import Cookies from "js-cookie";
 import 'normalize.css'
 import './Antd.css'
 import './App.css'
+
+const isSessionMovies = Cookies.get('guest_session_id')
 
 function App() {
   return (
@@ -14,4 +17,4 @@ function App() {
     </ConfigProvider>
   )
 }
-export { App }
+export { App, isSessionMovies }

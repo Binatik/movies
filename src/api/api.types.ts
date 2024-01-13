@@ -1,5 +1,20 @@
 export type IHttpMethod = "GET" | "POST" | "PUT" | "DELETE"
 
+export type IMessage = 'FetchError' | null
+
+export type IError = {
+  status: boolean
+  payload: unknown
+}
+
+export type IFetchError = {
+  message: 'FetchError' | null
+} & IError
+
+export type IServerError = {
+  message: 'ServerError' | null
+} & IError
+
 
 export interface IMovie { 
   adult: boolean;
