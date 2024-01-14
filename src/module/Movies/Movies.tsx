@@ -258,19 +258,21 @@ function Movies() {
     try {
       if (!cachePages.has(pageServer)) {
         setPopularMovies((prev) => ({ ...prev, loading: true }))
-        const result = await api.getPopularMovie('ru-US', 1, rootHeaders)
+        const result = await api.getPopularMovie('ru-US', pageServer, rootHeaders)
 
         cachePages.set(pageServer, pageServer)
         pageServer += 1
 
-        setPopularMovies((prev) => {
-          return {
-            ...prev, loading: false,
-            data: {
-              results: prev.data?.results.concat(result.results)
-            }
-          } as IMoviesFilter
-        })
+        setTimeout(() => {
+          setPopularMovies((prev) => {
+            return {
+              ...prev, loading: false,
+              data: {
+                results: prev.data?.results.concat(result.results)
+              }
+            } as IMoviesFilter
+          })
+        }, 1000)
       }
     }
 
@@ -278,6 +280,8 @@ function Movies() {
       checkApi(error)
     }
   }
+
+  console.log(popularMovies)
 
   return (
     //Warning: [antd: Tabs] `Tabs.TabPane` is deprecated.
@@ -296,11 +300,10 @@ function Movies() {
         <Input size="large" placeholder="Type to search..." />
         <Flex gap="middle" justify='center' wrap='wrap'>
           {popularMovies.error.status ? <h1>Ошибка загрузки</h1> :
-            <>
-              <SpinOutlined isLoading={popularMovies.loading} isErrorApi={errorApi.status} />
+            <SpinOutlined isLoading={popularMovies.loading} isErrorApi={errorApi.status}>
               {elementsCurrentPage?.map((movie) => (
                 <Card key={movie.id} movie={movie} />))}
-            </>
+            </SpinOutlined>
           }
         </Flex>
         <br />
