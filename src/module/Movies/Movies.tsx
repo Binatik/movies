@@ -172,7 +172,7 @@ const templateMovies: IMoviesFilter = {
   payload: null,
 
   error: {
-    message: null,
+    message: 'FetchError',
     status: false,
     payload: null
   },
@@ -191,7 +191,7 @@ const rootHeaders = {
 
 function Movies() {
   const [errorApi, setErrorApi] = useState<IMoviesFilter['error']>({
-    message: null,
+    message: 'FetchError',
     status: false,
     payload: null
   }) //Для обработки если проблемы с сетью, должен быть глобален.
@@ -199,8 +199,8 @@ function Movies() {
   const [popularMovies, setPopularMovies] = useState(templateMovies)
   // const [searchMovies, setSearchMovies] = useState(templateMovies)
 
-  function checkApi<T>(error: T) {
-    //callback во сновном для состояний компонетов, например loader.
+  function checkApi<T>(error: T, callback?: (error: IServerError) => void) {
+    //callback во сновном для состояний компонетов, например ErrorResponse.
 
     const typeErrorApi = error as IFetchError;
     const typeErrorSerever = error as IServerError;
@@ -210,7 +210,8 @@ function Movies() {
     }
 
     else if (api.isApiResponse(typeErrorSerever)) {
-      setErrorApi(typeErrorSerever)
+      if (!callback) return
+      callback(typeErrorSerever)
     }
   }
 
@@ -233,7 +234,10 @@ function Movies() {
       }
 
       catch (error) {
-        checkApi(error)
+        checkApi(error, ((error) => {
+          console.log(error)
+          setPopularMovies((prev) => ({ ...prev, error: error }))
+        }))
       }
     }
     fetchSession()
@@ -272,7 +276,7 @@ function Movies() {
               }
             } as IMoviesFilter
           })
-        }, 1000)
+        }, 500)
       }
     }
 
@@ -299,7 +303,7 @@ function Movies() {
         )}
         <Input size="large" placeholder="Type to search..." />
         <Flex gap="middle" justify='center' wrap='wrap'>
-          {popularMovies.error.status ? <h1>Ошибка загрузки</h1> :
+          {popularMovies.error.status ? <h1>Ошибка загрузки {popularMovies.error.payload}</h1> :
             <SpinOutlined isLoading={popularMovies.loading} isErrorApi={errorApi.status}>
               {elementsCurrentPage?.map((movie) => (
                 <Card key={movie.id} movie={movie} />))}

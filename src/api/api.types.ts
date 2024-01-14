@@ -1,18 +1,18 @@
 export type IHttpMethod = "GET" | "POST" | "PUT" | "DELETE"
 
-export type IMessage = 'FetchError' | null
+export type IMessage = 'FetchError'
 
 export type IError = {
   status: boolean
-  payload: unknown
+  payload: null
 }
 
 export type IFetchError = {
-  message: 'FetchError' | null
+  message: 'FetchError'
 } & IError
 
 export type IServerError = {
-  message: 'ServerError' | null
+  message: 'ServerError'
 } & IError
 
 
