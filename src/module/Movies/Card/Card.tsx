@@ -1,4 +1,3 @@
-import mov from './mov.png'
 import { Card as CardUi } from '../../../ui'
 import { Progress, Rate, Tag, Typography } from 'antd';
 const { Title, Text } = Typography;
@@ -9,6 +8,7 @@ import './Card.css'
 
 
 const api = new MoviesService()
+const prePatch = 'https://image.tmdb.org/t/p/w500'
 
 function Card({ movie }: ICardMovieProps) {
   const ratingToPercentage = (average: number) => Math.round((average / 10) * 100);
@@ -43,7 +43,7 @@ function Card({ movie }: ICardMovieProps) {
 
   return (
     <CardUi className='movie__card' hoverable type='primary'>
-      <img className='movie__photo' src={mov} alt='movie' />
+      <img className='movie__photo' src={`${prePatch}${movie.poster_path}`} alt='movie' />
       <div className='movie__content'>
         <div className='movie__top'>
           <div className='movie__block'>

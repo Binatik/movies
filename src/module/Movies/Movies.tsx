@@ -179,7 +179,6 @@ const templateMovies: IMoviesFilter = {
 }
 
 let pageServer = 1;
-let currentNumberPagePagination = 1
 
 const cachePages = new Map<number, number>()
 const counterCurrentPage = 5; //Кол - во элементов на одну стр.
@@ -197,6 +196,7 @@ function Movies() {
   }) //Для обработки если проблемы с сетью, должен быть глобален.
 
   const [popularMovies, setPopularMovies] = useState(templateMovies)
+  const [currentNumberPagePagination, setCurrentNumberPagePagination] = useState(1)
   // const [searchMovies, setSearchMovies] = useState(templateMovies)
 
   function checkApi<T>(error: T, callback?: (error: IServerError) => void) {
@@ -250,10 +250,11 @@ function Movies() {
     if (!data) return
 
     return getElementsPagination(data.results, currentNumberPagePagination, counterCurrentPage)
-  }, [popularMovies])
+  }, [popularMovies, currentNumberPagePagination])
 
   async function updateMovies(page: number) {
-    currentNumberPagePagination = page
+    console.log(page)
+    setCurrentNumberPagePagination(page)
 
     if (page % 4 !== 0) {
       return
@@ -285,7 +286,7 @@ function Movies() {
     }
   }
 
-  console.log(popularMovies)
+  console.log(elementsCurrentPage)
 
   return (
     //Warning: [antd: Tabs] `Tabs.TabPane` is deprecated.

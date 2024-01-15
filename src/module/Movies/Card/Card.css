@@ -48,7 +48,8 @@
   }
 
   .movie__photo {
-    height: auto;
+    width: clamp(12.4rem, 15vw, 20.2rem);
+    height: 100%;
     position: relative;
   }
   

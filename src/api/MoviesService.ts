@@ -63,7 +63,7 @@ class MoviesService {
       headers
     };
     console.log(`/movie/popular?language=${language}&page=${page.toString()}`)
-    return this.getResponse<Promise<RootMovie>>(`/movie1/popular?language=${language}&page=${page.toString()}`, fetchOptions)
+    return this.getResponse<Promise<RootMovie>>(`/movie/popular?language=${language}&page=${page.toString()}`, fetchOptions)
   }
 
   async getRatedMovies(language: 'ru-US' | 'en-US', page: number, sort: 'created_at.asc' | 'created_at.desc', headers?: HeadersInit) {
