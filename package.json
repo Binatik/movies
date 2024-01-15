@@ -8,6 +8,7 @@
     "build": "tsc && vite build",
     "lint": "eslint ./src",
     "lint:fix": "eslint ./src --fix",
+    "lint-staged": "lint-staged",
     "format": "prettier ./src --write",
     "preview": "vite preview",
     "postinstall": "husky install"
@@ -46,7 +47,8 @@
   },
   "lint-staged": {
     "*.{js,ts,tsx}": [
-      "lint:fix"
+      "npm run lint:fix",
+      "npm run format"
     ]
   }
 }
