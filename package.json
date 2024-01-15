@@ -45,8 +45,8 @@
     "vite": "^5.0.8"
   },
   "lint-staged": {
-    "*.{js,ts,tsx,mjs,mts}": [
-      "npm run lint:fix"
+    "*.{js,ts,tsx}": [
+      "lint:fix"
     ]
   }
 }
