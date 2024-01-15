@@ -1,22 +1,21 @@
-export type IHttpMethod = "GET" | "POST" | "PUT" | "DELETE"
+export type IHttpMethod = "GET" | "POST" | "PUT" | "DELETE";
 
-export type IMessage = 'FetchError'
+export type IMessage = "FetchError";
 
 export type IError = {
-  status: boolean
-  payload: null
-}
+  status: boolean;
+  payload: null;
+};
 
 export type IFetchError = {
-  message: 'FetchError'
-} & IError
+  message: "FetchError";
+} & IError;
 
 export type IServerError = {
-  message: 'ServerError'
-} & IError
+  message: "ServerError";
+} & IError;
 
-
-export interface IMovie { 
+export interface IMovie {
   adult: boolean;
   backdrop_path: string;
   genre_ids?: number[] | null;
@@ -33,19 +32,18 @@ export interface IMovie {
   vote_count: number;
 }
 
-export interface RootMovie { 
+export interface RootMovie {
   dates: {
     maximum: string;
     minimum: string;
-  }
+  };
   page: number;
   results: IMovie[];
   total_pages: number;
   total_results: number;
 }
 
-
-export interface IGustSession { 
+export interface IGustSession {
   success: boolean;
   guest_session_id: string;
   expires_at: string;

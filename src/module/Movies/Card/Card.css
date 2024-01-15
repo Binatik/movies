@@ -3,7 +3,7 @@
 }
 
 .movie__photo {
-  height: 120px; 
+  height: 120px;
   position: absolute;
 }
 
@@ -52,11 +52,11 @@
     height: 100%;
     position: relative;
   }
-  
+
   .movie__content {
     padding: 12px 9px 4px 20px;
   }
-  
+
   .movie__top {
     padding-left: 0;
     padding-top: 0;

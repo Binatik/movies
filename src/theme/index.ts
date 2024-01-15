@@ -12,13 +12,13 @@ export const theme: ThemeConfig = {
       borderRadius: 3,
     },
     Card: {
-      paddingLG: 0
+      paddingLG: 0,
     },
     Progress: {
-      defaultColor: '#eedc40'
+      defaultColor: "#eedc40",
     },
     Pagination: {
-      itemActiveBg: '#1890ff',
-    }
+      itemActiveBg: "#1890ff",
+    },
   },
-}
+};
