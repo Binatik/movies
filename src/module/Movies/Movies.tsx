@@ -11,12 +11,11 @@ import debounce from "lodash.debounce";
 
 const api = new MoviesService();
 const templateMovies: IMoviesFilter = {
-  loading: true,
   data: null,
   payload: null,
 
   error: {
-    message: "FetchError",
+    message: null,
     status: false,
     payload: null,
   },
@@ -39,6 +38,7 @@ function Movies() {
     payload: null,
   }); //Для обработки если проблемы с сетью, должен быть глобален.
 
+  const [isLoading, setIsLoading] = useState(true); //Отвечает за состояние загрузки popularMovies
   const [popularMovies, setPopularMovies] = useState(templateMovies);
   const [currentNumberPagePagination, setCurrentNumberPagePagination] =
     useState(1);
@@ -74,15 +74,16 @@ function Movies() {
     const fetchMovies = async () => {
       try {
         const result = await api.getPopularMovie("ru-US", 1, rootHeaders);
-        setPopularMovies((prev) => ({ ...prev, data: result, loading: false }));
+        setPopularMovies((prev) => ({ ...prev, data: result }));
       } catch (error) {
         checkApi(error, (error) => {
           setPopularMovies((prev) => ({
             ...prev,
-            error: error,
-            loading: false,
+            error,
           }));
         });
+      } finally {
+        setIsLoading(false);
       }
     };
     fetchSession();
@@ -109,57 +110,74 @@ function Movies() {
     }
 
     try {
-      if (!cachePages.has(pageServer)) {
-        setPopularMovies((prev) => ({ ...prev, loading: true }));
-        const result = await api.getPopularMovie(
-          "ru-US",
-          pageServer,
-          rootHeaders,
-        );
-
-        cachePages.set(pageServer, pageServer);
-        pageServer += 1;
-
-        setPopularMovies((prev) => {
-          return {
-            ...prev,
-            loading: false,
-            data: {
-              results: prev.data?.results.concat(result.results),
-            },
-          } as IMoviesFilter;
-        });
+      if (cachePages.has(page)) {
+        return;
       }
+
+      pageServer += 1;
+      setIsLoading(true);
+      const result = await api.getPopularMovie(
+        "ru-US",
+        pageServer,
+        rootHeaders,
+      );
+
+      setPopularMovies((prev) => {
+        return {
+          ...prev,
+          data: {
+            results: prev.data?.results.concat(result.results),
+          },
+        } as IMoviesFilter;
+      });
+
+      cachePages.set(page, pageServer);
     } catch (error) {
       checkApi(error);
+    } finally {
+      setIsLoading(false);
     }
   }
 
   async function getSearchMovies(event: ChangeEvent<HTMLInputElement>) {
     const inputValue = event.currentTarget.value;
+    cachePages.clear();
+
+    setCurrentNumberPagePagination(1);
+    setIsLoading(true);
 
     try {
-      if (inputValue !== " ") {
-        setPopularMovies((prev) => ({ ...prev, loading: true }));
-        const result = await api.getSearchMovies(
-          inputValue,
-          true,
-          "ru-US",
-          1,
-          rootHeaders,
-        );
-        setPopularMovies((prev) => ({ ...prev, data: result, loading: false }));
+      if (inputValue.trim() === "") {
+        const result = await api.getPopularMovie("ru-US", 1, rootHeaders);
+        setPopularMovies((prev) => ({ ...prev, data: result }));
+        return;
       }
 
-      if (inputValue === "") {
-        setPopularMovies((prev) => ({ ...prev, loading: true }));
-        const result = await api.getPopularMovie("ru-US", 1, rootHeaders);
-        setPopularMovies((prev) => ({ ...prev, data: result, loading: false }));
-      }
+      const result = await api.getSearchMovies(
+        inputValue,
+        true,
+        "ru-US",
+        1,
+        rootHeaders,
+      );
+      setPopularMovies((prev) => ({
+        ...prev,
+        payload: inputValue,
+        data: result,
+      }));
     } catch (error) {
       checkApi(error, (error) => {
-        setPopularMovies((prev) => ({ ...prev, error: error, loading: false }));
+        setPopularMovies((prev) => ({ ...prev, error }));
       });
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  //Тут не совсем понимаю как с unknown работать в jsx, кроме как надоумить создать функцию идей нет!
+  function getMoviesPayload() {
+    if (typeof popularMovies.payload === "string") {
+      return popularMovies.payload;
     }
   }
 
@@ -190,13 +208,14 @@ function Movies() {
           {popularMovies.error.status ? (
             <h1>Ошибка загрузки {popularMovies.error.payload}</h1>
           ) : (
-            <SpinOutlined
-              isLoading={popularMovies.loading}
-              isErrorApi={errorApi.status}
-            >
-              {elementsCurrentPage?.map((movie) => (
-                <Card key={movie.id} movie={movie} />
-              ))}
+            <SpinOutlined isLoading={isLoading} isErrorApi={errorApi.status}>
+              {elementsCurrentPage && elementsCurrentPage?.length > 0 ? (
+                elementsCurrentPage?.map((movie) => (
+                  <Card key={movie.id} movie={movie} />
+                ))
+              ) : (
+                <h2>Мы ничего не нашли по запросу {getMoviesPayload()}</h2>
+              )}
             </SpinOutlined>
           )}
         </Flex>
@@ -207,6 +226,7 @@ function Movies() {
             <Pagination
               onChange={updateMovies}
               type="primary"
+              current={currentNumberPagePagination}
               defaultPageSize={counterCurrentPage}
               className="movie__pagination"
               total={popularMovies.data?.results.length}

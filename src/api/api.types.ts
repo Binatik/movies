@@ -8,11 +8,11 @@ export type IError = {
 };
 
 export type IFetchError = {
-  message: "FetchError";
+  message: "FetchError" | null;
 } & IError;
 
 export type IServerError = {
-  message: "ServerError";
+  message: "ServerError" | null;
 } & IError;
 
 export interface IMovie {
