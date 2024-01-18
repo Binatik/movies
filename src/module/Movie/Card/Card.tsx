@@ -10,8 +10,7 @@ const api = new MoviesService();
 const prePatch = "https://image.tmdb.org/t/p/w500";
 
 function Card({ movie }: ICardMovieProps) {
-  const ratingToPercentage = (average: number) =>
-    Math.round((average / 10) * 100);
+  const ratingToPercentage = (average: number) => Math.round((average / 10) * 100);
   const progressRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -23,9 +22,7 @@ function Card({ movie }: ICardMovieProps) {
       }
 
       //Получае span в ProgressBar и меняем в dom узле строку с % на строку с rating
-      current.children[0].children[1].textContent = movie.vote_average
-        .toFixed(1)
-        .toString();
+      current.children[0].children[1].textContent = movie.vote_average.toFixed(1).toString();
     } catch (error) {
       if (error instanceof Error) {
         console.log(error.message);
@@ -44,11 +41,7 @@ function Card({ movie }: ICardMovieProps) {
 
   return (
     <CardUi className="movie__card" hoverable type="primary">
-      <img
-        className="movie__photo"
-        src={`${prePatch}${movie.poster_path}`}
-        alt="movie"
-      />
+      <img className="movie__photo" src={`${prePatch}${movie.poster_path}`} alt="movie" />
       <div className="movie__content">
         <div className="movie__top">
           <div className="movie__block">
@@ -72,13 +65,7 @@ function Card({ movie }: ICardMovieProps) {
           </div>
         </div>
         <Text className="movie__info">{movie.overview}</Text>
-        <Rate
-          onChange={addRate}
-          className="movie__rate"
-          allowHalf
-          count={10}
-          defaultValue={0}
-        />
+        <Rate onChange={addRate} className="movie__rate" allowHalf count={10} defaultValue={0} />
       </div>
     </CardUi>
   );
