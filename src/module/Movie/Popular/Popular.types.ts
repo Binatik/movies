@@ -2,5 +2,5 @@ import { RootMovie } from "../../../api/api.types";
 
 export type IMoviesFilter = {
   data: RootMovie | null;
-  payload: unknown;
+  payload: React.ReactNode;
 };

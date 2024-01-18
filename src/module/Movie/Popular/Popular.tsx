@@ -146,11 +146,11 @@ function Popular() {
     }
   }
 
-  //Тут не совсем понимаю как с unknown работать в jsx, кроме как надоумить создать функцию идей нет!
-  function getMoviesPayload() {
-    if (typeof popularMovies.payload === "string") {
-      return popularMovies.payload;
+  function renderMovieList() {
+    if (elementsCurrentPage && elementsCurrentPage?.length > 0) {
+      return elementsCurrentPage.map((movie) => <Card key={movie.id} movie={movie} />);
     }
+    return popularMovies.payload && <h2>Мы ничего не нашли по запросу {popularMovies.payload}</h2>;
   }
 
   return (
@@ -168,17 +168,11 @@ function Popular() {
       <Input onChange={debounce(getSearchMovies, 350)} size="large" placeholder="Type to search..." />
 
       <Flex gap="middle" justify="center" wrap="wrap">
-        {isError.status ? (
-          <h1>Ошибка загрузки {isError.payload}</h1>
-        ) : (
-          <SpinOutlined isLoading={isLoading} isErrorApi={errorApi.status}>
-            {elementsCurrentPage && elementsCurrentPage?.length > 0 ? (
-              elementsCurrentPage?.map((movie) => <Card key={movie.id} movie={movie} />)
-            ) : (
-              <h2>Мы ничего не нашли по запросу {getMoviesPayload()}</h2>
-            )}
-          </SpinOutlined>
-        )}
+        {isError.status && <h1>Ошибка загрузки</h1>}
+        <SpinOutlined isLoading={isLoading} isErrorApi={errorApi.status}>
+          {/* Если нет лоадинга и не ошибка */}
+          {renderMovieList()}
+        </SpinOutlined>
       </Flex>
       <br />
       <br />
