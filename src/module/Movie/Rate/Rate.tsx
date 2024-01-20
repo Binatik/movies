@@ -1,13 +1,13 @@
+import { Alert, Flex, Input } from "antd";
+import { useErrorApi } from "../../../hooks/useErrorApi";
+import { IFetchError, IServerError } from "../../../api/api.types";
+import { IMoviesFilter } from "./Rate.types";
 import { ChangeEvent, useEffect, useMemo, useState } from "react";
 import { MoviesService } from "../../../api/MoviesService";
-import { IMoviesFilter } from "./Popular.types";
-import { Alert, Flex, Input } from "antd";
-import debounce from "lodash.debounce";
-import { Pagination, SpinOutlined } from "../../../ui";
 import { getElementsPagination } from "../../../helpers/getElementsPagination";
-import { IFetchError, IServerError } from "../../../api/api.types";
 import { Card } from "../Card";
-import { useErrorApi } from "../../../hooks/useErrorApi";
+import { Pagination, SpinOutlined } from "../../../ui";
+import debounce from "lodash.debounce";
 
 const api = new MoviesService();
 
@@ -28,23 +28,22 @@ const cachePages = new Map<number, number>();
 const counterCurrentPage = 5; //Кол - во элементов на одну стр.
 
 const rootHeaders = {
-  Authorization: api.getToken,
   accept: "application/json",
 };
 
-function Popular() {
+function Rate() {
   const { errorApi, getErrorApi } = useErrorApi();
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState<IServerError>(templateError);
 
-  const [popularMovies, setPopularMovies] = useState(templateMovies);
+  const [rateMovies, setRateMovies] = useState(templateMovies);
   const [currentNumberPagePagination, setCurrentNumberPagePagination] = useState(1);
 
   useEffect(() => {
     const fetchMovies = async () => {
       try {
-        const result = await api.getPopularMovie("ru-US", 1, rootHeaders);
-        setPopularMovies((prev) => ({ ...prev, data: result }));
+        const result = await api.getRatedMovies("ru-US", 1, "created_at.asc", rootHeaders);
+        setRateMovies((prev) => ({ ...prev, data: result }));
       } catch (error) {
         const _errorApi = error as IFetchError;
         const _errorServer = error as IServerError;
@@ -64,11 +63,11 @@ function Popular() {
 
   //Получаем элементы нужной стр.
   const elementsCurrentPage = useMemo(() => {
-    const data = popularMovies.data;
+    const data = rateMovies.data;
     if (!data) return;
 
     return getElementsPagination(data.results, currentNumberPagePagination, counterCurrentPage);
-  }, [popularMovies, currentNumberPagePagination]);
+  }, [rateMovies, currentNumberPagePagination]);
 
   async function updateMovies(page: number) {
     setCurrentNumberPagePagination(page);
@@ -84,9 +83,9 @@ function Popular() {
 
       pageServer += 1;
       setIsLoading(true);
-      const result = await api.getPopularMovie("ru-US", pageServer, rootHeaders);
+      const result = await api.getRatedMovies("ru-US", pageServer, "created_at.asc", rootHeaders);
 
-      setPopularMovies((prev) => {
+      setRateMovies((prev) => {
         return {
           ...prev,
           data: {
@@ -120,13 +119,13 @@ function Popular() {
 
     try {
       if (inputValue.trim() === "") {
-        const result = await api.getPopularMovie("ru-US", 1, rootHeaders);
-        setPopularMovies((prev) => ({ ...prev, data: result }));
+        const result = await api.getRatedMovies("ru-US", 1, "created_at.asc", rootHeaders);
+        setRateMovies((prev) => ({ ...prev, data: result }));
         return;
       }
 
       const result = await api.getSearchMovies(inputValue, true, "ru-US", 1, rootHeaders);
-      setPopularMovies((prev) => ({
+      setRateMovies((prev) => ({
         ...prev,
         payload: inputValue,
         data: result,
@@ -155,7 +154,7 @@ function Popular() {
       <SpinOutlined isLoading={isLoading} isErrorApi={errorApi.status}>
         {elementsCurrentPage?.map((movie) => <Card key={movie.id} movie={movie} />)}
 
-        {!elementsCurrentPage?.length && <h2>Мы ничего не нашли по запросу {popularMovies.payload}</h2>}
+        {!elementsCurrentPage?.length && <h2>Мы ничего не нашли по запросу {rateMovies.payload}</h2>}
       </SpinOutlined>
     );
   }
@@ -186,7 +185,7 @@ function Popular() {
             current={currentNumberPagePagination}
             defaultPageSize={counterCurrentPage}
             className="movie__pagination"
-            total={popularMovies.data?.results.length}
+            total={rateMovies.data?.results.length}
           />
         )}
       </Flex>
@@ -196,4 +195,4 @@ function Popular() {
   );
 }
 
-export { Popular };
+export { Rate };

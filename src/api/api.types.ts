@@ -20,6 +20,7 @@ export interface IMovie {
   backdrop_path: string;
   genre_ids?: number[] | null;
   id: number;
+  rating?: number;
   original_language: string;
   original_title: string;
   overview: string;

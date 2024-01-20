@@ -1,11 +1,5 @@
 // import { ExceptionMethods } from "./ExceptionMethods";
-import {
-  IFetchError,
-  IGustSession,
-  IHttpMethod,
-  IServerError,
-  RootMovie,
-} from "./api.types";
+import { IFetchError, IGustSession, IHttpMethod, IServerError, RootMovie } from "./api.types";
 import Cookies from "js-cookie";
 
 class MoviesService {
@@ -61,17 +55,10 @@ class MoviesService {
       headers,
     };
 
-    return this.getResponse<Promise<IGustSession>>(
-      `/authentication/guest_session/new`,
-      fetchOptions,
-    );
+    return this.getResponse<Promise<IGustSession>>(`/authentication/guest_session/new`, fetchOptions);
   }
 
-  async getPopularMovie(
-    language: "ru-US" | "en-US",
-    page: number,
-    headers?: HeadersInit,
-  ) {
+  async getPopularMovie(language: "ru-US" | "en-US", page: number, headers?: HeadersInit) {
     const method: IHttpMethod = "GET";
     const fetchOptions = {
       method: method,
@@ -96,7 +83,7 @@ class MoviesService {
       method: method,
       headers,
     };
-    return this.getResponse<Promise<unknown>>(
+    return this.getResponse<Promise<RootMovie>>(
       `/guest_session/${Cookies.get("guest_session_id")}/rated/movies?api_key=${this.getKey}&language=${language}&page=${page.toString()}&sort_by=${sort}`,
       fetchOptions,
     );
@@ -108,6 +95,19 @@ class MoviesService {
       method: method,
       headers,
       body: body,
+    };
+
+    return this.getResponse<Promise<unknown>>(
+      `/movie/${movieId.toString()}/rating?guest_session_id=${Cookies.get("guest_session_id")}&api_key=${this.getKey}`,
+      fetchOptions,
+    );
+  }
+
+  async deleteRating(movieId: number, headers?: HeadersInit) {
+    const method: IHttpMethod = "DELETE";
+    const fetchOptions = {
+      method: method,
+      headers,
     };
 
     return this.getResponse<Promise<unknown>>(
@@ -129,7 +129,7 @@ class MoviesService {
       headers,
     };
     return this.getResponse<Promise<RootMovie>>(
-      `/search/movie?query=${query}&include_adult=${include_adult}&language=${language}&page=${page.toString()}`,
+      `/search/movie?query=${query}&include_adult=${include_adult}&language=${language}&page=${page.toString()}&api_key=${this.getKey}`,
       fetchOptions,
     );
   }

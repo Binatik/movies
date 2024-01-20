@@ -1,10 +1,10 @@
 import { Tabs } from "antd";
-import { Popular } from ".";
 import { useEffect } from "react";
 import { useErrorApi } from "../../hooks/useErrorApi";
 import { MoviesService } from "../../api/MoviesService";
 import Cookies from "js-cookie";
 import { IFetchError, IServerError } from "../../api/api.types";
+import { Popular, Rate } from ".";
 
 const api = new MoviesService();
 
@@ -44,8 +44,8 @@ function Movie() {
       <Tabs.TabPane tab="Search" key="item-1">
         <Popular />
       </Tabs.TabPane>
-      <Tabs.TabPane tab="Rated" key="item-2">
-        Content
+      <Tabs.TabPane destroyInactiveTabPane tab="Rated" key="item-2">
+        <Rate />
       </Tabs.TabPane>
     </Tabs>
   );
