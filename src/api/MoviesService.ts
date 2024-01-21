@@ -1,5 +1,5 @@
 // import { ExceptionMethods } from "./ExceptionMethods";
-import { IFetchError, IGustSession, IHttpMethod, IServerError, RootMovie } from "./api.types";
+import { IFetchError, IGenre, IGustSession, IHttpMethod, IServerError, RootMovie } from "./api.types";
 import Cookies from "js-cookie";
 
 class MoviesService {
@@ -132,6 +132,15 @@ class MoviesService {
       `/search/movie?query=${query}&include_adult=${include_adult}&language=${language}&page=${page.toString()}&api_key=${this.getKey}`,
       fetchOptions,
     );
+  }
+
+  async getGenres(language: "ru-US" | "en-US", headers?: HeadersInit) {
+    const method: IHttpMethod = "GET";
+    const fetchOptions = {
+      method: method,
+      headers,
+    };
+    return this.getResponse<Promise<IGenre>>(`/genre/movie/list?language=${language}`, fetchOptions);
   }
 
   isApiError(error: IFetchError) {

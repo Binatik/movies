@@ -49,3 +49,10 @@ export interface IGustSession {
   guest_session_id: string;
   expires_at: string;
 }
+
+export interface IGenre {
+  genres: {
+    id: number;
+    name: string;
+  }[];
+}

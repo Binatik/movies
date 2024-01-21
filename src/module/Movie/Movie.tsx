@@ -5,6 +5,7 @@ import { MoviesService } from "../../api/MoviesService";
 import Cookies from "js-cookie";
 import { IFetchError, IServerError } from "../../api/api.types";
 import { Popular, Rate } from ".";
+import { MovieContextProvider } from "./store/context/MovieContextProvider";
 
 const api = new MoviesService();
 
@@ -40,14 +41,16 @@ function Movie() {
   }, []);
 
   return (
-    <Tabs tabBarStyle={{ width: "140px", margin: "0 auto 19px auto" }} size="large" centered>
-      <Tabs.TabPane tab="Search" key="item-1">
-        <Popular />
-      </Tabs.TabPane>
-      <Tabs.TabPane destroyInactiveTabPane tab="Rated" key="item-2">
-        <Rate />
-      </Tabs.TabPane>
-    </Tabs>
+    <MovieContextProvider>
+      <Tabs tabBarStyle={{ width: "140px", margin: "0 auto 19px auto" }} size="large" centered>
+        <Tabs.TabPane tab="Search" key="item-1">
+          <Popular />
+        </Tabs.TabPane>
+        <Tabs.TabPane destroyInactiveTabPane tab="Rated" key="item-2">
+          <Rate />
+        </Tabs.TabPane>
+      </Tabs>
+    </MovieContextProvider>
   );
 }
 
