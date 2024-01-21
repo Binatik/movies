@@ -29,8 +29,6 @@ function Card({ movie }: ICardMovieProps) {
 
   const { genres } = useContextType();
 
-  console.log(genres);
-
   useEffect(() => {
     try {
       const { current } = progressRef;
@@ -46,7 +44,7 @@ function Card({ movie }: ICardMovieProps) {
       circle.textContent = average;
     } catch (error) {
       if (error instanceof Error) {
-        console.log(error.message);
+        throw error;
       }
     }
   }, [movie.vote_average]);
