@@ -3,6 +3,7 @@
 ##### Пробник применение MovieDB Api.
 
 ---
+<img width="1162" alt="image" src="https://github.com/Binatik/images/assets/47430210/654771dc-3b98-4d85-82f5-ae76d2b74e72">
 
 ## Проверить
 
