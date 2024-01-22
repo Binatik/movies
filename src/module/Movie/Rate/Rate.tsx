@@ -1,13 +1,12 @@
-import { Alert, Flex, Input } from "antd";
+import { Alert, Flex } from "antd";
 import { useErrorApi } from "../../../hooks/useErrorApi";
 import { IFetchError, IServerError } from "../../../api/api.types";
 import { IMoviesFilter } from "./Rate.types";
-import { ChangeEvent, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { MoviesService } from "../../../api/MoviesService";
 import { getElementsPagination } from "../../../helpers/getElementsPagination";
 import { Card } from "../Card";
 import { Pagination, SpinOutlined } from "../../../ui";
-import debounce from "lodash.debounce";
 
 const api = new MoviesService();
 
@@ -42,7 +41,7 @@ function Rate() {
   useEffect(() => {
     const fetchMovies = async () => {
       try {
-        const result = await api.getRatedMovies("ru-US", 1, "created_at.asc", rootHeaders);
+        const result = await api.getRatedMovies("ru-RU", 1, "created_at.asc", rootHeaders);
         setRateMovies((prev) => ({ ...prev, data: result }));
       } catch (error) {
         const _errorApi = error as IFetchError;
@@ -83,7 +82,7 @@ function Rate() {
 
       pageServer += 1;
       setIsLoading(true);
-      const result = await api.getRatedMovies("ru-US", pageServer, "created_at.asc", rootHeaders);
+      const result = await api.getRatedMovies("ru-RU", pageServer, "created_at.asc", rootHeaders);
 
       setRateMovies((prev) => {
         return {
@@ -110,44 +109,9 @@ function Rate() {
     }
   }
 
-  async function getSearchMovies(event: ChangeEvent<HTMLInputElement>) {
-    const inputValue = event.currentTarget.value;
-    cachePages.clear();
-
-    setCurrentNumberPagePagination(1);
-    setIsLoading(true);
-
-    try {
-      if (inputValue.trim() === "") {
-        const result = await api.getRatedMovies("ru-US", 1, "created_at.asc", rootHeaders);
-        setRateMovies((prev) => ({ ...prev, data: result }));
-        return;
-      }
-
-      const result = await api.getSearchMovies(inputValue, true, "ru-US", 1, rootHeaders);
-      setRateMovies((prev) => ({
-        ...prev,
-        payload: inputValue,
-        data: result,
-      }));
-    } catch (error) {
-      const _errorApi = error as IFetchError;
-      const _errorServer = error as IServerError;
-
-      if (api.isApiError(_errorApi)) {
-        getErrorApi(_errorApi);
-        throw _errorApi;
-      } else if (api.isApiResponse(_errorServer)) {
-        setIsError(_errorServer);
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  }
-
   function renderMovieList() {
     if (isError.status) {
-      <h1>Ошибка загрузки {isError.payload}</h1>;
+      return <h1>Ошибка загрузки {isError.payload}</h1>;
     }
 
     return (
@@ -171,7 +135,6 @@ function Rate() {
           closable
         />
       )}
-      <Input onChange={debounce(getSearchMovies, 450)} size="large" placeholder="Type to search..." />
       <Flex gap="middle" justify="center" wrap="wrap">
         {renderMovieList()}
       </Flex>

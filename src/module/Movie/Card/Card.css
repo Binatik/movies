@@ -1,10 +1,19 @@
 .movie__card {
+  width: 100%;
   margin-top: 8px;
 }
 
 .movie__photo {
-  height: 120px;
+  height: 140px;
   position: absolute;
+}
+
+.movie__photo-skeleton {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  background: rgba(0, 0, 0, 0.06);
+  height: 50%;
 }
 
 .movie__content {
@@ -15,7 +24,7 @@
 }
 
 .movie__top {
-  padding-left: 90px;
+  padding-left: 110px;
 }
 
 .movie__block {
@@ -23,6 +32,9 @@
 }
 
 .movie__tegs {
+  position: absolute;
+  margin: 0;
+  padding-left: 0;
   padding-top: 10px;
   padding-bottom: 10px;
   display: flex;
@@ -32,25 +44,30 @@
 }
 
 .movie__info {
-  padding-top: 20px;
-  flex: 1;
+  padding-top: 90px;
+  flex: 1 1;
 }
 
 .movie__rate {
-  padding-top: 15px;
-  padding-bottom: 15px;
+  display: flex;
+  padding-top: 10px;
+  padding-bottom: 10px;
   align-self: flex-end;
 }
 
 @media (min-width: 576px) {
   .movie__card {
     margin-top: 34px;
-    flex: 1 1 460px;
   }
 
   .movie__photo {
-    width: clamp(12.4rem, 15vw, 20.2rem);
+    display: block;
+    width: clamp(10rem, 18vw, 16rem);
     height: 100%;
+    position: relative;
+  }
+
+  .movie__photo-skeleton {
     position: relative;
   }
 
@@ -61,5 +78,19 @@
   .movie__top {
     padding-left: 0;
     padding-top: 0;
+  }
+
+  .movie__tegs {
+    position: relative;
+  }
+
+  .movie__info {
+    padding-top: 1px;
+  }
+}
+
+@media (min-width: 1140px) {
+  .movie__card {
+    flex: 1 1 calc(100% / 2 - 16px * 1 / 2)
   }
 }

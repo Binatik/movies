@@ -1,5 +1,5 @@
 import { Card as CardUi } from "../../../ui";
-import { Progress, Rate, Tag, Typography } from "antd";
+import { Progress, Rate, Skeleton, Tag, Typography } from "antd";
 const { Title, Text } = Typography;
 import { useContext, useEffect, useRef } from "react";
 import { ICardMovieProps } from "./Card.types";
@@ -10,6 +10,7 @@ import { shortenDescription } from "../../../helpers/shortenDescription";
 import { MovieContext } from "../store/context/MovieContextProvider";
 import { IGenre, IMovie } from "../../../api/api.types";
 import "./Card.css";
+import { getCurrentColor } from "../../../helpers/getCurrentColor";
 
 const api = new MoviesService();
 const prePatch = "https://image.tmdb.org/t/p/w500";
@@ -67,26 +68,6 @@ function Card({ movie }: ICardMovieProps) {
     return movie.rating ? movie.rating : 0;
   }
 
-  function getCurrentColor() {
-    const average = movie.vote_average;
-
-    if (average < 3) {
-      return "#E90000";
-    }
-
-    if (average > 2 && average < 4) {
-      return "#E97E00";
-    }
-
-    if (average > 4 && average < 7) {
-      return "#E9D100";
-    }
-
-    if (average > 7) {
-      return "#66E900";
-    }
-  }
-
   function getNamesMatchingIDs(genreIds: IMovie["genre_ids"], genres: IGenre["genres"]) {
     if (!genreIds) {
       return;
@@ -101,9 +82,21 @@ function Card({ movie }: ICardMovieProps) {
     ));
   }
 
+  function renderImage() {
+    if (!movie.poster_path) {
+      return (
+        <div className="movie__photo-skeleton">
+          <Skeleton.Image />
+        </div>
+      );
+    }
+
+    return <img className="movie__photo" src={`${prePatch}${movie.poster_path}`} alt={`Photo ${movie.title}`} />;
+  }
+
   return (
     <CardUi className="movie__card" hoverable type="primary">
-      <img className="movie__photo" src={`${prePatch}${movie.poster_path}`} alt="movie" />
+      {renderImage()}
       <div className="movie__content">
         <div className="movie__top">
           <div className="movie__block">
@@ -114,17 +107,17 @@ function Card({ movie }: ICardMovieProps) {
               style={{ marginLeft: "auto" }}
               ref={progressRef}
               type="circle"
-              strokeColor={getCurrentColor()}
+              strokeColor={getCurrentColor(movie.vote_average)}
               percent={getNumberToPercentage(movie.vote_average)}
-              size={45}
+              size={40}
             />
           </div>
           <Text className="movie__date" type="secondary">
-            {formatIsoDate(new Date(movie.release_date), "ru-RU")}
+            {(movie.release_date && formatIsoDate(new Date(movie.release_date), "ru-RU")) || "Неизвестно"}
           </Text>
-          <div className="movie__tegs">{getNamesMatchingIDs(movie.genre_ids, genres)}</div>
+          <ul className="movie__tegs">{getNamesMatchingIDs(movie.genre_ids, genres)}</ul>
         </div>
-        <Text className="movie__info">{shortenDescription(movie.overview, 250)}</Text>
+        <Typography.Paragraph className="movie__info">{shortenDescription(movie.overview, 180)}</Typography.Paragraph>
         <Rate onChange={addRate} className="movie__rate" allowHalf count={10} defaultValue={getCurrentRating()} />
       </div>
     </CardUi>

@@ -6,6 +6,7 @@ import "./Card.css";
 function Card({ children, type, className, ...props }: ICardProps) {
   const style = {
     display: `${type === "primary" && "flex"}`,
+    height: `100%`,
   };
 
   return (

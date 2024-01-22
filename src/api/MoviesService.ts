@@ -58,13 +58,12 @@ class MoviesService {
     return this.getResponse<Promise<IGustSession>>(`/authentication/guest_session/new`, fetchOptions);
   }
 
-  async getPopularMovie(language: "ru-US" | "en-US", page: number, headers?: HeadersInit) {
+  async getPopularMovie(language: "ru-RU" | "en-US", page: number, headers?: HeadersInit) {
     const method: IHttpMethod = "GET";
     const fetchOptions = {
       method: method,
       headers,
     };
-    console.log(`/movie/popular?language=${language}&page=${page.toString()}`);
     return this.getResponse<Promise<RootMovie>>(
       `/movie/popular?language=${language}&page=${page.toString()}`,
       fetchOptions,
@@ -72,7 +71,7 @@ class MoviesService {
   }
 
   async getRatedMovies(
-    language: "ru-US" | "en-US",
+    language: "ru-RU" | "en-US",
     page: number,
     sort: "created_at.asc" | "created_at.desc",
     headers?: HeadersInit,
@@ -119,7 +118,7 @@ class MoviesService {
   async getSearchMovies(
     query: string,
     include_adult: boolean,
-    language: "ru-US" | "en-US",
+    language: "ru-RU" | "en-US",
     page: number,
     headers?: HeadersInit,
   ) {
@@ -134,7 +133,7 @@ class MoviesService {
     );
   }
 
-  async getGenres(language: "ru-US" | "en-US", headers?: HeadersInit) {
+  async getGenres(language: "ru-RU" | "en-US", headers?: HeadersInit) {
     const method: IHttpMethod = "GET";
     const fetchOptions = {
       method: method,

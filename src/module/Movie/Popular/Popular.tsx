@@ -25,7 +25,7 @@ const templateError: IServerError = {
 let pageServer = 1;
 
 const cachePages = new Map<number, number>();
-const counterCurrentPage = 5; //Кол - во элементов на одну стр.
+const counterCurrentPage = 10; //Кол - во элементов на одну стр.
 
 const rootHeaders = {
   Authorization: api.getToken,
@@ -43,7 +43,7 @@ function Popular() {
   useEffect(() => {
     const fetchMovies = async () => {
       try {
-        const result = await api.getPopularMovie("ru-US", 1, rootHeaders);
+        const result = await api.getPopularMovie("ru-RU", 1, rootHeaders);
         setPopularMovies((prev) => ({ ...prev, data: result }));
       } catch (error) {
         const _errorApi = error as IFetchError;
@@ -73,7 +73,7 @@ function Popular() {
   async function updateMovies(page: number) {
     setCurrentNumberPagePagination(page);
 
-    if (page % 4 !== 0) {
+    if (page % 2 !== 0) {
       return;
     }
 
@@ -84,7 +84,7 @@ function Popular() {
 
       pageServer += 1;
       setIsLoading(true);
-      const result = await api.getPopularMovie("ru-US", pageServer, rootHeaders);
+      const result = await api.getPopularMovie("ru-RU", pageServer, rootHeaders);
 
       setPopularMovies((prev) => {
         return {
@@ -120,12 +120,12 @@ function Popular() {
 
     try {
       if (inputValue.trim() === "") {
-        const result = await api.getPopularMovie("ru-US", 1, rootHeaders);
+        const result = await api.getPopularMovie("ru-RU", 1, rootHeaders);
         setPopularMovies((prev) => ({ ...prev, data: result }));
         return;
       }
 
-      const result = await api.getSearchMovies(inputValue, true, "ru-US", 1, rootHeaders);
+      const result = await api.getSearchMovies(inputValue, true, "ru-RU", 1, rootHeaders);
       setPopularMovies((prev) => ({
         ...prev,
         payload: inputValue,
@@ -148,7 +148,7 @@ function Popular() {
 
   function renderMovieList() {
     if (isError.status) {
-      <h1>Ошибка загрузки {isError.payload}</h1>;
+      return <h1>Ошибка загрузки {isError.payload}</h1>;
     }
 
     return (
