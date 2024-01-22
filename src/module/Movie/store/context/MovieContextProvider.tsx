@@ -25,7 +25,7 @@ function MovieContextProvider({ children }: IModalContextProvider) {
   useEffect(() => {
     const fetchGenres = async () => {
       try {
-        const result = await api.getGenres("ru-US", rootHeaders);
+        const result = await api.getGenres("ru-RU", rootHeaders);
         setGenre(result);
       } catch (error) {
         const _errorApi = error as IFetchError;
