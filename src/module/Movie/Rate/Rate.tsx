@@ -110,6 +110,8 @@ function Rate() {
   }
 
   function renderMovieList() {
+    const isContainerError = !elementsCurrentPage?.length && !errorApi.status;
+
     if (isError.status) {
       return <h1>Ошибка загрузки {isError.payload}</h1>;
     }
@@ -118,7 +120,7 @@ function Rate() {
       <SpinOutlined isLoading={isLoading} isErrorApi={errorApi.status}>
         {elementsCurrentPage?.map((movie) => <Card key={movie.id} movie={movie} />)}
 
-        {!elementsCurrentPage?.length && isError.status && <h2>Мы ничего не нашли по запросу {rateMovies.payload}</h2>}
+        {isContainerError && <h2>Пока пусто, добавь фильм и не теряй его!</h2>}
       </SpinOutlined>
     );
   }

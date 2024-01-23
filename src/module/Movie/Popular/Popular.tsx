@@ -135,9 +135,11 @@ function Popular() {
       const _errorApi = error as IFetchError;
       const _errorServer = error as IServerError;
 
+      const errorApiModify = { ..._errorApi, payload: `Network ${event.currentTarget.value} problems` };
+
       if (api.isApiError(_errorApi)) {
-        getErrorApi(_errorApi);
-        throw _errorApi;
+        getErrorApi(errorApiModify);
+        throw errorApiModify;
       } else if (api.isApiResponse(_errorServer)) {
         setIsError(_errorServer);
       }
@@ -147,6 +149,8 @@ function Popular() {
   }
 
   function renderMovieList() {
+    const isContainerError = !elementsCurrentPage?.length && !errorApi.status;
+
     if (isError.status) {
       return <h1>Ошибка загрузки {isError.payload}</h1>;
     }
@@ -155,9 +159,7 @@ function Popular() {
       <SpinOutlined isLoading={isLoading} isErrorApi={errorApi.status}>
         {elementsCurrentPage?.map((movie) => <Card key={movie.id} movie={movie} />)}
 
-        {!elementsCurrentPage?.length && isError.status && (
-          <h2>Мы ничего не нашли по запросу {popularMovies.payload}</h2>
-        )}
+        {isContainerError && <h2>Мы ничего не нашли по запросу {popularMovies.payload}</h2>}
       </SpinOutlined>
     );
   }
@@ -171,7 +173,6 @@ function Popular() {
           description={`${errorApi.payload}`}
           type="warning"
           showIcon
-          closable
         />
       )}
       <Input onChange={debounce(getSearchMovies, 450)} size="large" placeholder="Type to search..." />

@@ -4,7 +4,7 @@ export type IMessage = "FetchError";
 
 export type IError = {
   status: boolean;
-  payload: null;
+  payload: null | React.ReactNode;
 };
 
 export type IFetchError = {
