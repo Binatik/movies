@@ -155,7 +155,9 @@ function Popular() {
       <SpinOutlined isLoading={isLoading} isErrorApi={errorApi.status}>
         {elementsCurrentPage?.map((movie) => <Card key={movie.id} movie={movie} />)}
 
-        {!elementsCurrentPage?.length && <h2>Мы ничего не нашли по запросу {popularMovies.payload}</h2>}
+        {!elementsCurrentPage?.length && isError.status && (
+          <h2>Мы ничего не нашли по запросу {popularMovies.payload}</h2>
+        )}
       </SpinOutlined>
     );
   }

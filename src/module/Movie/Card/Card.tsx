@@ -76,9 +76,9 @@ function Card({ movie }: ICardMovieProps) {
     const result = genres.filter((item) => genreIds.includes(item.id));
 
     return result.map((item) => (
-      <Tag key={item.id} color="default">
-        {item.name}
-      </Tag>
+      <li key={item.id}>
+        <Tag color="default">{item.name}</Tag>
+      </li>
     ));
   }
 

@@ -43,6 +43,10 @@
   gap: 4px;
 }
 
+.movie__tegs > li {
+  list-style: none;
+}
+
 .movie__info {
   padding-top: 90px;
   flex: 1 1;
